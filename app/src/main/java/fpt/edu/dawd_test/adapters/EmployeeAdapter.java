@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
         holder.textViewDesignation.setText(employee.getDesignation());
         holder.textViewSalary.setText(String.valueOf(employee.getSalary()));
 
-        holder.layoutEmployee.setOnClickListener(view -> edit(view, employee.getId()));
+        holder.layoutEmployee.setOnClickListener(view -> onClickEmployee(view, employee.getId()));
     }
 
     @Override
@@ -48,10 +49,10 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
         return employees == null ? 0 : employees.size();
     }
 
-    private void edit(View view, int id) {
-        Intent intent = new Intent(view.getContext(), MainActivity.class);
+    private void onClickEmployee(View view, int id) {
+        Intent intent = new Intent("edit-employee");
         intent.putExtra("id", id);
-        view.getContext().startActivity(intent);
+        LocalBroadcastManager.getInstance(view.getContext()).sendBroadcast(intent);
     }
 
     public void refreshView(List<Employee> employees) {

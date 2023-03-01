@@ -1,9 +1,14 @@
 package fpt.edu.dawd_test;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,19 +49,9 @@ public class MainActivity extends AppCompatActivity {
         buttonUpdate = findViewById(R.id.buttonUpdate);
         buttonDelete = findViewById(R.id.buttonDelete);
 
-        int editId = getIntent().getIntExtra("id", 0);
-        if (editId != 0) {
-            editEmployeeId = editId;
-            System.out.println(editId);
-            bindEditEmployee(editEmployeeId);
-            buttonUpdate.setOnClickListener(view -> this.updateEmployee(editEmployeeId));
-            buttonDelete.setOnClickListener(view -> this.deleteEmployee(editEmployeeId));
-        }
-
-        this.initView();
-        this.fetchEmployees();
-
         buttonAdd.setOnClickListener(view -> this.addEmployee());
+
+        this.listenToAdapterOnClick();
     }
 
     private void initView() {
@@ -67,6 +62,23 @@ public class MainActivity extends AppCompatActivity {
 
         employeeAdapter = new EmployeeAdapter(this, employees);
         recyclerViewEmployee.setAdapter(employeeAdapter);
+    }
+
+    private void listenToAdapterOnClick() {
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                editEmployeeId = intent.getIntExtra("id", 0);
+                if (editEmployeeId != 0) {
+                    bindEditEmployee(editEmployeeId);
+                    buttonUpdate.setOnClickListener(view -> updateEmployee(editEmployeeId));
+                    buttonDelete.setOnClickListener(view -> deleteEmployee(editEmployeeId));
+                }
+            }
+        }, new IntentFilter("edit-employee"));
+
+        this.initView();
+        this.fetchEmployees();
     }
 
     private void fetchEmployees() {
