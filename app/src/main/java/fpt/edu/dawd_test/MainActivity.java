@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void listenToAdapterOnClick() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int editEmployeeId = intent.getIntExtra("id", 0);
