@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
     Button buttonAdd, buttonUpdate, buttonDelete;
     RecyclerView recyclerViewEmployee;
 
-    int editEmployeeId;
-
     AppDatabase appDatabase;
     EmployeeAdapter employeeAdapter;
     List<Employee> employees = new ArrayList<>();
@@ -68,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                editEmployeeId = intent.getIntExtra("id", 0);
+                int editEmployeeId = intent.getIntExtra("id", 0);
                 if (editEmployeeId != 0) {
                     bindEditEmployee(editEmployeeId);
                     buttonUpdate.setOnClickListener(view -> updateEmployee(editEmployeeId));
@@ -160,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
         textEditName.setText("");
         textEditDesignation.setText("");
         textEditSalary.setText("");
-        editEmployeeId = 0;
     }
 
     private int parseSalary(String salaryStr) {
