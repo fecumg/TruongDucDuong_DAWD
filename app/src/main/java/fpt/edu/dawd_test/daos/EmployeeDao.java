@@ -18,10 +18,10 @@ public interface EmployeeDao {
     @Update
     void update(Employee employee);
 
-    @Query(value = "SELECT * FROM employee WHERE id=:id")
+    @Query(value = "SELECT * FROM employees WHERE id=:id")
     Employee findById(int id);
 
-    @Query(value = "SELECT * FROM employee")
+    @Query(value = "SELECT * FROM employees")
     List<Employee> findAll();
 
     @Delete
