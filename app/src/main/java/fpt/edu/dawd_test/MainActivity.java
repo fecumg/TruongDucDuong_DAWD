@@ -141,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
 
             appDatabase.employeeDao().update(employee);
             Toast.makeText(this, "Employee updated successfully", Toast.LENGTH_SHORT).show();
+            this.fetchEmployees();
         }
-        this.fetchEmployees();
     }
 
     private void deleteEmployee(int id) {
