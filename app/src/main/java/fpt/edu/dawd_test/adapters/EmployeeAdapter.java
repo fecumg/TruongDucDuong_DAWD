@@ -19,6 +19,7 @@ import fpt.edu.dawd_test.entities.Employee;
 
 public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHolder> {
 
+    public static final String ONCLICK_EMPLOYEE_ACTION = "edit-employee";
     Activity activity;
     List<Employee> employees;
 
@@ -50,7 +51,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
     }
 
     private void onClickEmployee(View view, int id) {
-        Intent intent = new Intent("edit-employee");
+        Intent intent = new Intent(ONCLICK_EMPLOYEE_ACTION);
         intent.putExtra("id", id);
         LocalBroadcastManager.getInstance(view.getContext()).sendBroadcast(intent);
     }

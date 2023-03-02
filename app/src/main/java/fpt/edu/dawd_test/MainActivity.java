@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     buttonDelete.setOnClickListener(view -> deleteEmployee(editEmployeeId));
                 }
             }
-        }, new IntentFilter("edit-employee"));
+        }, new IntentFilter(EmployeeAdapter.ONCLICK_EMPLOYEE_ACTION));
 
         this.initView();
         this.fetchEmployees();
