@@ -22,6 +22,8 @@ import fpt.edu.dawd_test.entities.Employee;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String ONCLICK_EMPLOYEE_ACTION = "edit-employee";
+
     EditText textEditName, textEditDesignation, textEditSalary;
     Button buttonAdd, buttonUpdate, buttonDelete;
     RecyclerView recyclerViewEmployee;
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         buttonAdd.setOnClickListener(view -> this.addEmployee());
 
         this.initView();
-        employeeAdapter.refreshView(appDatabase.employeeDao().findAll());
+        employeeAdapter.refreshAllItems(appDatabase.employeeDao().findAll());
 
         this.listenToAdapterOnClick();
     }
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerViewEmployee.setLayoutManager(layoutManager);
 
-        employeeAdapter = new EmployeeAdapter(this, new ArrayList<>());
+        employeeAdapter = new EmployeeAdapter(new ArrayList<>(), ONCLICK_EMPLOYEE_ACTION);
         recyclerViewEmployee.setAdapter(employeeAdapter);
     }
 
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                     buttonDelete.setOnClickListener(view -> deleteEmployee(editEmployeeId, editEmployeePosition));
                 }
             }
-        }, new IntentFilter(EmployeeAdapter.ONCLICK_EMPLOYEE_ACTION));
+        }, new IntentFilter(ONCLICK_EMPLOYEE_ACTION));
     }
 
     private void addEmployee() {
