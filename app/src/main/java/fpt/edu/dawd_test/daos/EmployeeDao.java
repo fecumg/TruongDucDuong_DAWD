@@ -13,7 +13,7 @@ import fpt.edu.dawd_test.entities.Employee;
 @Dao
 public interface EmployeeDao {
     @Insert
-    void save(Employee employee);
+    long save(Employee employee);
 
     @Update
     void update(Employee employee);

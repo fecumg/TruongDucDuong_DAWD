@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import fpt.edu.dawd_test.MainActivity;
 import fpt.edu.dawd_test.R;
 import fpt.edu.dawd_test.entities.Employee;
 
@@ -42,7 +41,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
         holder.textViewDesignation.setText(employee.getDesignation());
         holder.textViewSalary.setText(String.valueOf(employee.getSalary()));
 
-        holder.layoutEmployee.setOnClickListener(view -> onClickEmployee(view, employee.getId()));
+        holder.layoutEmployee.setOnClickListener(view -> onClickEmployee(view, employee.getId(), position));
     }
 
     @Override
@@ -50,19 +49,35 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
         return employees == null ? 0 : employees.size();
     }
 
-    private void onClickEmployee(View view, int id) {
+    private void onClickEmployee(View view, int id, int position) {
         Intent intent = new Intent(ONCLICK_EMPLOYEE_ACTION);
         intent.putExtra("id", id);
+        intent.putExtra("position", position);
         LocalBroadcastManager.getInstance(view.getContext()).sendBroadcast(intent);
     }
 
     public void refreshView(List<Employee> employees) {
         this.employees = employees;
-        notifyDataSetChanged();
+        notifyItemRangeChanged(0, employees.size());
+    }
+
+    public void refreshNewItem(Employee employee) {
+        this.employees.add(employee);
+        notifyItemInserted(this.employees.size());
+    }
+
+    public void refreshChangedItem(int position, Employee employee) {
+        this.employees.set(position, employee);
+        notifyItemChanged(position);
+    }
+
+    public void refreshRemovedItem(int position) {
+        this.employees.remove(position);
+        notifyItemRemoved(position);
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewName, textViewDesignation, textViewSalary;
 
         RelativeLayout layoutEmployee;

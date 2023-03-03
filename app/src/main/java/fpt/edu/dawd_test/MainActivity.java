@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import fpt.edu.dawd_test.adapters.EmployeeAdapter;
 import fpt.edu.dawd_test.database.AppDatabase;
@@ -29,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     AppDatabase appDatabase;
     EmployeeAdapter employeeAdapter;
-    List<Employee> employees = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
         buttonAdd.setOnClickListener(view -> this.addEmployee());
 
+        this.initView();
+        employeeAdapter.refreshView(appDatabase.employeeDao().findAll());
+
         this.listenToAdapterOnClick();
     }
 
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerViewEmployee.setLayoutManager(layoutManager);
 
-        employeeAdapter = new EmployeeAdapter(this, employees);
+        employeeAdapter = new EmployeeAdapter(this, new ArrayList<>());
         recyclerViewEmployee.setAdapter(employeeAdapter);
     }
 
@@ -68,21 +68,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int editEmployeeId = intent.getIntExtra("id", 0);
+                int editEmployeePosition = intent.getIntExtra("position", -1);
                 if (editEmployeeId != 0) {
                     bindEditEmployee(editEmployeeId);
-                    buttonUpdate.setOnClickListener(view -> updateEmployee(editEmployeeId));
-                    buttonDelete.setOnClickListener(view -> deleteEmployee(editEmployeeId));
+                    buttonUpdate.setOnClickListener(view -> updateEmployee(editEmployeeId, editEmployeePosition));
+                    buttonDelete.setOnClickListener(view -> deleteEmployee(editEmployeeId, editEmployeePosition));
                 }
             }
         }, new IntentFilter(EmployeeAdapter.ONCLICK_EMPLOYEE_ACTION));
-
-        this.initView();
-        this.fetchEmployees();
-    }
-
-    private void fetchEmployees() {
-        employees = appDatabase.employeeDao().findAll();
-        employeeAdapter.refreshView(employees);
     }
 
     private void addEmployee() {
@@ -92,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        appDatabase.employeeDao().save(employee);
+        int newId = (int) appDatabase.employeeDao().save(employee);
         Toast.makeText(this, "New employee added successfully", Toast.LENGTH_SHORT).show();
-        this.fetchEmployees();
+        employeeAdapter.refreshNewItem(appDatabase.employeeDao().findById(newId));
         this.flushTextView();
     }
 
@@ -129,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         textEditSalary.setText(String.valueOf(employee.getSalary()));
     }
 
-    private void updateEmployee(int id) {
+    private void updateEmployee(int id, int position) {
         if (id != 0) {
             Employee employee = validateEmployee();
 
@@ -141,16 +134,16 @@ public class MainActivity extends AppCompatActivity {
 
             appDatabase.employeeDao().update(employee);
             Toast.makeText(this, "Employee updated successfully", Toast.LENGTH_SHORT).show();
-            this.fetchEmployees();
+            employeeAdapter.refreshChangedItem(position, appDatabase.employeeDao().findById(id));
         }
     }
 
-    private void deleteEmployee(int id) {
+    private void deleteEmployee(int id, int position) {
         if (id != 0) {
             Employee employee = appDatabase.employeeDao().findById(id);
             appDatabase.employeeDao().delete(employee);
             Toast.makeText(this, "Employee deleted successfully", Toast.LENGTH_SHORT).show();
-            this.fetchEmployees();
+            employeeAdapter.refreshRemovedItem(position);
             this.flushTextView();
         }
     }
